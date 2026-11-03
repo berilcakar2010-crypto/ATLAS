@@ -51,7 +51,7 @@ import com.atlas.app.data.db.QuestionEntity
 import com.atlas.app.data.db.QuestionStatus
 import com.atlas.app.data.db.ResearchTopicEntity
 import com.atlas.app.data.db.TopicCount
-import com.atlas.app.data.feed.Category
+import com.atlas.app.feature.common.rememberCategories
 import com.atlas.app.feature.common.SyncBar
 import com.atlas.app.feature.common.openUrl
 import com.atlas.app.feature.common.relativeTime
@@ -223,6 +223,7 @@ private fun BriefingPanel(vm: CommandCenterViewModel, onNavigate: (Destination) 
     val items by vm.briefing.collectAsStateWithLifecycle()
     val total by vm.briefingTotal.collectAsStateWithLifecycle()
     val sources by vm.briefingSources.collectAsStateWithLifecycle()
+    val names = rememberCategories(rememberAtlasApp()).associate { it.id to it.name }
     AtlasPanel(modifier) {
         SectionLabel("Günlük bülten · son 48 saat")
         if (items.isEmpty()) {
@@ -236,7 +237,7 @@ private fun BriefingPanel(vm: CommandCenterViewModel, onNavigate: (Destination) 
             items.forEach { a ->
                 Column(Modifier.fillMaxWidth().clickable { openUrl(context, a.url) }, verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                        AtlasChip(Category.fromName(a.category).label, highlight = true)
+                        AtlasChip(names[a.category] ?: "Diğer", highlight = true)
                         MetaText("${a.sourceName} · ${relativeTime(a.publishedAt)}")
                     }
                     Text(a.title, style = MaterialTheme.typography.bodyLarge, color = AtlasColors.Ivory, maxLines = 2)

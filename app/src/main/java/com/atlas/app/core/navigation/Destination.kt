@@ -11,7 +11,8 @@ enum class Destination(val route: String, val index: String, val title: String) 
     Notebook("notebook", "07", "Research Notebook"),
     Sustainability("sustainability", "08", "Sustainability Monitor"),
     OfflineArchive("archive", "09", "Offline Archive"),
-    Settings("settings", "10", "Settings");
+    Dictionary("dictionary", "10", "Sözlük · Tureng"),
+    Settings("settings", "11", "Settings");
 
     val sectionLabel: String get() = "SEC. $index — $title"
 

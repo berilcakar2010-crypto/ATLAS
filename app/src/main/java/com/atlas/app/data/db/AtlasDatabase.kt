@@ -29,8 +29,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         DeepDiveSessionEntity::class,
         DeepDiveMessageEntity::class,
         StrokeEntity::class,
+        CategoryEntity::class,
+        VocabEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = false,
 )
 abstract class AtlasDatabase : RoomDatabase() {
@@ -43,11 +45,13 @@ abstract class AtlasDatabase : RoomDatabase() {
     abstract fun deepDiveDao(): DeepDiveDao
     abstract fun notebookDao(): NotebookDao
     abstract fun strokeDao(): StrokeDao
+    abstract fun categoryDao(): CategoryDao
+    abstract fun vocabDao(): VocabDao
 
     companion object {
         fun create(context: Context): AtlasDatabase =
             Room.databaseBuilder(context.applicationContext, AtlasDatabase::class.java, "atlas.db")
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                 .build()
     }
 }
@@ -70,5 +74,14 @@ val MIGRATION_1_2: Migration = object : Migration(1, 2) {
         db.execSQL("CREATE INDEX IF NOT EXISTS `index_deep_dive_messages_sessionId` ON `deep_dive_messages` (`sessionId`)")
         db.execSQL("CREATE TABLE IF NOT EXISTS `strokes` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `pageId` INTEGER NOT NULL, `tool` TEXT NOT NULL, `color` INTEGER NOT NULL, `width` REAL NOT NULL, `points` BLOB NOT NULL, `createdAt` INTEGER NOT NULL, FOREIGN KEY(`pageId`) REFERENCES `notebook_pages`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )")
         db.execSQL("CREATE INDEX IF NOT EXISTS `index_strokes_pageId` ON `strokes` (`pageId`)")
+    }
+}
+
+/** v2 → v3: kategoriler ve kayıtlı sözcükler. Mevcut tablolara dokunulmaz. */
+val MIGRATION_2_3: Migration = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("CREATE TABLE IF NOT EXISTS `categories` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `keywords` TEXT NOT NULL, `builtin` INTEGER NOT NULL, `sortOrder` INTEGER NOT NULL, PRIMARY KEY(`id`))")
+        db.execSQL("CREATE TABLE IF NOT EXISTS `vocab_words` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `word` TEXT NOT NULL, `meaning` TEXT NOT NULL, `example` TEXT NOT NULL, `note` TEXT NOT NULL, `context` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `known` INTEGER NOT NULL, `reviewCount` INTEGER NOT NULL)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_vocab_words_word` ON `vocab_words` (`word`)")
     }
 }

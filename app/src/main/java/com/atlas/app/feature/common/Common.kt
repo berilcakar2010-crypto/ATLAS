@@ -124,3 +124,10 @@ fun SyncBar(app: AtlasApp, modifier: Modifier = Modifier) {
         MetaText(text, Modifier.padding(vertical = 2.dp))
     }
 }
+
+/** Kullanıcının kategori listesi (sıralı). */
+@Composable
+fun rememberCategories(app: AtlasApp): List<com.atlas.app.data.db.CategoryEntity> {
+    val list by app.database.categoryDao().observeAll().collectAsStateWithLifecycle(emptyList())
+    return list
+}

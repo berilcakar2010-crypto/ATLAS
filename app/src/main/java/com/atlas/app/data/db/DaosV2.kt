@@ -15,25 +15,25 @@ interface FeedDao {
     @Query("SELECT * FROM feed_sources WHERE enabled = 1")
     suspend fun getEnabled(): List<FeedSourceEntity>
 
+    @Query("SELECT * FROM feed_sources")
+    suspend fun observeAllOnce(): List<FeedSourceEntity>
+
     @Query("SELECT id FROM feed_sources")
     suspend fun getIds(): List<String>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(feeds: List<FeedSourceEntity>)
 
-    @Query(
-        "UPDATE feed_sources SET name = :name, url = :url, category = :category, kind = :kind, " +
-            "language = :language, mixed = :mixed WHERE id = :id",
-    )
-    suspend fun updateMeta(
-        id: String,
-        name: String,
-        url: String,
-        category: String,
-        kind: String,
-        language: String,
-        mixed: Boolean,
-    )
+    /** Katalog yenilemesi kullanıcının seçtiği kategoriye dokunmaz. */
+    @Query("UPDATE feed_sources SET name = :name, url = :url, kind = :kind, language = :language, mixed = :mixed WHERE id = :id")
+    suspend fun updateMeta(id: String, name: String, url: String, kind: String, language: String, mixed: Boolean)
+
+    @Query("UPDATE feed_sources SET category = :category WHERE id = :id")
+    suspend fun setCategory(id: String, category: String)
+
+    /** Yalnızca kullanıcının eklediği ("custom-") kaynaklar silinebilir. */
+    @Query("DELETE FROM feed_sources WHERE id = :id AND id LIKE 'custom-%'")
+    suspend fun deleteCustom(id: String)
 
     @Query("UPDATE feed_sources SET enabled = :enabled WHERE id = :id")
     suspend fun setEnabled(id: String, enabled: Boolean)
@@ -85,6 +85,12 @@ interface ArticleDao {
 
     @Query("UPDATE articles SET saved = :saved, savedAt = :now WHERE id = :id")
     suspend fun setSaved(id: Long, saved: Boolean, now: Long)
+
+    @Query("SELECT * FROM articles WHERE sourceId IN (:sourceIds)")
+    suspend fun getBySources(sourceIds: List<String>): List<ArticleEntity>
+
+    @Query("UPDATE articles SET category = :category WHERE id = :id")
+    suspend fun setCategory(id: Long, category: String)
 
     @Query("UPDATE articles SET tags = :tags WHERE id = :id")
     suspend fun setTags(id: Long, tags: String)
@@ -250,4 +256,49 @@ interface StrokeDao {
 
     @Query("DELETE FROM strokes WHERE pageId = :pageId")
     suspend fun clearPage(pageId: Long)
+}
+
+@Dao
+interface CategoryDao {
+    @Query("SELECT * FROM categories ORDER BY sortOrder ASC, name COLLATE NOCASE")
+    fun observeAll(): Flow<List<CategoryEntity>>
+
+    @Query("SELECT * FROM categories ORDER BY sortOrder ASC, name COLLATE NOCASE")
+    suspend fun getAll(): List<CategoryEntity>
+
+    @Query("SELECT COUNT(*) FROM categories")
+    suspend fun count(): Int
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAll(items: List<CategoryEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsert(item: CategoryEntity)
+
+    @Query("DELETE FROM categories WHERE id = :id AND builtin = 0")
+    suspend fun deleteCustom(id: String)
+}
+
+@Dao
+interface VocabDao {
+    @Query("SELECT * FROM vocab_words ORDER BY createdAt DESC")
+    fun observeAll(): Flow<List<VocabEntity>>
+
+    @Query("SELECT COUNT(*) FROM vocab_words")
+    fun observeCount(): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM vocab_words WHERE lower(word) = lower(:word)")
+    suspend fun countWord(word: String): Int
+
+    @Insert
+    suspend fun insert(item: VocabEntity): Long
+
+    @Update
+    suspend fun update(item: VocabEntity)
+
+    @Query("DELETE FROM vocab_words WHERE id = :id")
+    suspend fun delete(id: Long)
+
+    @Query("UPDATE vocab_words SET known = :known, reviewCount = reviewCount + 1 WHERE id = :id")
+    suspend fun markReviewed(id: Long, known: Boolean)
 }

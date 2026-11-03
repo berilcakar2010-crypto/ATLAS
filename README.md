@@ -32,9 +32,10 @@ Bir çalışmayı elle başlatmak için: **Actions → Build APK → Run workflo
 ## Durum (Phase 7 — derleme başarılı, cihazda test EDİLMEDİ)
 
 Yazılan ve CI'da derlenen özellikler:
-- Daily Intelligence: 53 RSS/Atom kaynağı (canlı doğrulanmış; ölü/engelli 8 kaynak çıkarıldı), konu ve kaynak türü etiketi, arama, kaydetme, not.
+- Daily Intelligence: ~150 RSS/Atom kaynağı (canlı doğrulanmış; ölü/engelli olanlar çıkarıldı), 28 düzenlenebilir kategori + kendi kategorilerin, kendi RSS adresini ekleme, arama, kaydetme, not.
 - Research Radar: arXiv + PubMed araması, 16 başlangıç konusu (düzenlenebilir), kaydetme, not.
-- Sürdürülebilirlik izleyici, Çevrimdışı Arşiv durumu, bilgi grafiği (yalnızca etiket/başlık metin eşleşmesi).
+- Sürdürülebilirlik izleyici, Çevrimdışı Arşiv durumu, Kütüphane'de "Tüm kayıtlılar" (haber, makale, sözcük, not, gözlem). Bilgi grafiği kaldırıldı.
+- Sözlük (10. modül): Tureng web görünümü + kendi sözcük kaydın ve tekrar modu. Tureng otomatik veri çıkarımı yok.
 - S Pen defteri: basınçlı çizim, kalem türleri, silgi, şekil araçları, kâğıt türleri, geri al/yinele, PDF dışa aktarma.
 - Deep Dive: yapay zekâsız çalışma sayfası + gerçek makale araması; isteğe bağlı Gemini / OpenAI uyumlu sağlayıcı (varsayılan kapalı, uygunluk uyarısı var).
 - Command Center: canlı bülten, modül gizleme/sıralama/boyutlandırma. Arka plan eşitleme: 6 saatte bir.
@@ -56,7 +57,7 @@ app/src/main/java/com/atlas/app/
   feature/            command, questions, library, settings, placeholder
 ```
 
-## Veritabanı (Room, `atlas.db`, sürüm 2)
+## Veritabanı (Room, `atlas.db`, sürüm 3)
 
 | Tablo | Amaç |
 |---|---|

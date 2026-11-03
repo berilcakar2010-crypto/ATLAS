@@ -153,3 +153,29 @@ data class TopicCount(
     val topic: String,
     val count: Int,
 )
+
+/** Kullanıcının düzenleyebildiği haber kategorisi. [id] eski verilerle uyum için yerleşiklerde enum adıdır. */
+@Entity(tableName = "categories")
+data class CategoryEntity(
+    @PrimaryKey val id: String,
+    val name: String,
+    /** Virgülle ayrılmış anahtar sözcükler; karma kaynakların haberlerini sınıflandırmak için kullanılır. */
+    val keywords: String,
+    val builtin: Boolean,
+    val sortOrder: Int,
+)
+
+/** Kullanıcının kaydettiği sözcük. Anlamı kullanıcı yazar (ör. Tureng'den bakıp). */
+@Entity(tableName = "vocab_words", indices = [Index(value = ["word"])])
+data class VocabEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val word: String,
+    val meaning: String,
+    val example: String = "",
+    val note: String = "",
+    /** Sözcüğü nerede gördüğün (ör. haber başlığı). */
+    val context: String = "",
+    val createdAt: Long = System.currentTimeMillis(),
+    val known: Boolean = false,
+    val reviewCount: Int = 0,
+)

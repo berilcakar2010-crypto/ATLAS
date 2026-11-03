@@ -49,10 +49,11 @@ private val WorkingNow = listOf(
     "Kalıcı sol gezinme (geniş ekranda kenar çubuğu, dar ekranda ray)",
     "Yerel SQLite / Room veritabanı",
     "Soru Motoru ve Kütüphane notları",
-    "Daily Intelligence: ~53 kaynaktan RSS/Atom, konu ve tür etiketi, arama, kaydetme, not",
+    "Daily Intelligence: ~150 kaynaktan RSS/Atom, düzenlenebilir kategoriler, kendi kaynağını ekleme, arama, kaydetme, not",
     "Research Radar: arXiv ve PubMed araması, konu takibi, kaydetme, not",
     "Sürdürülebilirlik izleyici (haberler + kendi gözlemlerin) ve Çevrimdışı Arşiv durumu",
-    "Bilgi grafiği (etiket/başlık eşleşmesine dayalı)",
+    "Kütüphane: haber, makale, sözcük, not ve gözlem tek yerde (Tüm kayıtlılar)",
+    "Sözlük: Tureng web görünümü + kendi sözcük kaydın, tekrar modu",
     "S Pen defteri: çizim, basınç, silgi, şekiller, kâğıt türleri, geri al, PDF'e aktarma",
     "Deep Dive: çalışma sayfası + gerçek makale araması; isteğe bağlı yapay zekâ",
     "Command Center: canlı özet, düzenlenebilir modüller",
@@ -63,6 +64,7 @@ private val NotYet = listOf(
     "Defterde metin kutusu, görsel ekleme, PDF üstüne not alma",
     "Haber tam metni / PDF indirme (yalnızca başlık, özet, bağlantı saklanır)",
     "İçe/dışa aktarma ve yedekleme (PDF dışında)",
+    "Tureng otomatik çeviri çıkarımı (Tureng bot istemlerini engelliyor; sayfa normal web görünümünde açılır, anlamı sen kaydedersin)",
     "Gerçek cihazda (Galaxy Tab S10 Lite + S Pen) doğrulama: henüz yapılmadı, ilk testi sen yapacaksın",
 )
 
@@ -76,7 +78,6 @@ fun SettingsScreen() {
     }
     var confirmDelete by remember { mutableStateOf(false) }
     var bgSync by remember { mutableStateOf(app.secrets.backgroundSync) }
-    val feeds by app.database.feedDao().observeAll().collectAsStateWithLifecycle(emptyList())
 
     ScreenFrame(section = Destination.Settings.sectionLabel, title = "Ayarlar") {
         Column(
@@ -110,28 +111,8 @@ fun SettingsScreen() {
 
             AiSettings(Modifier.widthIn(max = 820.dp).fillMaxWidth())
 
-            AtlasPanel(Modifier.widthIn(max = 820.dp).fillMaxWidth()) {
-                SectionLabel("Haber kaynakları · ${feeds.count { it.enabled }}/${feeds.size} açık")
-                HairlineDivider()
-                MetaText("Kaynakları kapatırsan sonraki eşitlemede çekilmez; eski kayıtlar silinmez.")
-                feeds.forEach { f ->
-                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Column(Modifier.weight(1f)) {
-                            Text(f.name, style = MaterialTheme.typography.bodyMedium, color = if (f.enabled) AtlasColors.Ivory else AtlasColors.TaupeText)
-                            MetaText(
-                                when (f.lastStatus) {
-                                    "OK" -> "OK · ${relativeTime(f.lastFetchedAt)}"
-                                    "FAILED" -> "Başarısız · ${f.lastError ?: ""}"
-                                    else -> "Henüz denenmedi"
-                                },
-                            )
-                        }
-                        AtlasTextButton(if (f.enabled) "Açık" else "Kapalı", {
-                            scope.launch { app.database.feedDao().setEnabled(f.id, !f.enabled) }
-                        })
-                    }
-                }
-            }
+            CategoryManager(Modifier.widthIn(max = 820.dp).fillMaxWidth())
+            FeedManager(Modifier.widthIn(max = 820.dp).fillMaxWidth())
 
             AtlasPanel(Modifier.widthIn(max = 820.dp).fillMaxWidth()) {
                 SectionLabel("Uygulama durumu · v$versionName")

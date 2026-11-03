@@ -77,16 +77,12 @@ fun LibraryScreen() {
     ScreenFrame(section = Destination.Library.sectionLabel, title = "Kütüphane") {
         var tab by rememberSaveable { mutableStateOf("notes") }
         com.atlas.app.feature.common.FilterRow(
-            listOf("notes" to "Notlarım", "saved" to "Kayıtlı haber ve makaleler", "graph" to "Bilgi grafiği"),
+            listOf("notes" to "Notlarım", "saved" to "Tüm kayıtlılar"),
             tab,
             { tab = it },
         )
         if (tab == "saved") {
-            Box(Modifier.weight(1f).fillMaxWidth()) { com.atlas.app.feature.library.SavedPanel(app.database) }
-            return@ScreenFrame
-        }
-        if (tab == "graph") {
-            Box(Modifier.weight(1f).fillMaxWidth()) { com.atlas.app.feature.library.KnowledgeGraphPanel(app.database) }
+            Box(Modifier.weight(1f).fillMaxWidth()) { SavedPanel(app.database) }
             return@ScreenFrame
         }
         BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {

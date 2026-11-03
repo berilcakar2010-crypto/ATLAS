@@ -36,12 +36,12 @@ import com.atlas.app.core.design.ScreenFrame
 import com.atlas.app.core.navigation.Destination
 import com.atlas.app.data.db.ArticleEntity
 import com.atlas.app.data.db.TopicCount
-import com.atlas.app.data.feed.Category
 import com.atlas.app.data.feed.SourceKind
 import com.atlas.app.feature.common.AtlasField
 import com.atlas.app.feature.common.FilterRow
 import com.atlas.app.feature.common.SyncBar
 import com.atlas.app.feature.common.openUrl
+import com.atlas.app.feature.common.rememberCategories
 import com.atlas.app.feature.common.relativeTime
 import com.atlas.app.rememberAtlasApp
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -108,6 +108,8 @@ fun IntelligenceScreen() {
     val window by vm.windowDays.collectAsStateWithLifecycle()
     val kind by vm.onlyKind.collectAsStateWithLifecycle()
     val countMap = counts.associate { it.topic to it.count }
+    val cats = rememberCategories(app)
+    val names = cats.associate { it.id to it.name }
     val total = counts.sumOf { it.count }
 
     ScreenFrame(Destination.DailyIntelligence.sectionLabel, "Gündem ve haber akışı") {
@@ -118,7 +120,7 @@ fun IntelligenceScreen() {
         )
         FilterRow(windows, window, { vm.windowDays.value = it })
         FilterRow(
-            options = listOf("" to "Tümü · $total") + Category.entries.map { it.name to "${it.label} · ${countMap[it.name] ?: 0}" },
+            options = listOf("" to "Tümü · $total") + cats.map { it.id to "${it.name} · ${countMap[it.id] ?: 0}" },
             selected = category,
             onSelect = { vm.category.value = it },
         )
@@ -136,14 +138,14 @@ fun IntelligenceScreen() {
             )
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(articles, key = { it.id }) { a -> ArticleCard(a, { vm.toggleSaved(a) }, { n, t -> vm.saveNote(a, n, t) }) }
+                items(articles, key = { it.id }) { a -> ArticleCard(a, names[a.category] ?: "Diğer", { vm.toggleSaved(a) }, { n, t -> vm.saveNote(a, n, t) }) }
             }
         }
     }
 }
 
 @Composable
-fun ArticleCard(a: ArticleEntity, onToggleSaved: () -> Unit, onSaveNote: (String, String) -> Unit) {
+fun ArticleCard(a: ArticleEntity, categoryName: String, onToggleSaved: () -> Unit, onSaveNote: (String, String) -> Unit) {
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
     var note by remember(a.id, a.note) { mutableStateOf(a.note) }
@@ -153,7 +155,7 @@ fun ArticleCard(a: ArticleEntity, onToggleSaved: () -> Unit, onSaveNote: (String
     AtlasPanel(Modifier.fillMaxWidth()) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             AtlasChip(kind.label, highlight = kind == SourceKind.OPINION)
-            AtlasChip(Category.fromName(a.category).label)
+            AtlasChip(categoryName)
             if (a.language == "tr") AtlasChip("TR")
         }
         Text(a.title, style = MaterialTheme.typography.titleMedium, color = AtlasColors.Ivory)
@@ -178,6 +180,22 @@ fun ArticleCard(a: ArticleEntity, onToggleSaved: () -> Unit, onSaveNote: (String
             AtlasField(tags, { tags = it }, "Etiketler (virgülle ayır)", Modifier.fillMaxWidth(), singleLine = true)
             AtlasField(note, { note = it }, "Kendi notun (kaynaktan ayrı tutulur)", Modifier.fillMaxWidth(), minLines = 2)
             AtlasOutlinedButton("Notu kaydet", { onSaveNote(note, tags) })
+            val vocabApp = com.atlas.app.rememberAtlasApp()
+            val vocabScope = androidx.compose.runtime.rememberCoroutineScope()
+            var vWord by remember(a.id) { mutableStateOf("") }
+            var vMeaning by remember(a.id) { mutableStateOf("") }
+            MetaText("Bu haberde bilmediğin bir sözcük mü var? Sözlüğüne ekle (anlamı Sözlük sekmesindeki Tureng'den bakabilirsin).")
+            AtlasField(vWord, { vWord = it }, "Sözcük", Modifier.fillMaxWidth(), singleLine = true)
+            AtlasField(vMeaning, { vMeaning = it }, "Anlamı", Modifier.fillMaxWidth(), singleLine = true)
+            AtlasOutlinedButton("Sözlüğe ekle", {
+                vocabScope.launch {
+                    vocabApp.database.vocabDao().insert(
+                        com.atlas.app.data.db.VocabEntity(word = vWord.trim(), meaning = vMeaning.trim(), context = a.title.take(120)),
+                    )
+                    vWord = ""
+                    vMeaning = ""
+                }
+            }, enabled = vWord.isNotBlank() && vMeaning.isNotBlank())
             MetaText("Adres: ${a.url}")
         }
     }

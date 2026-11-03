@@ -35,6 +35,7 @@ import com.atlas.app.core.util.Format
 import com.atlas.app.data.db.ArticleEntity
 import com.atlas.app.data.db.LibraryItemEntity
 import com.atlas.app.data.feed.Category
+import com.atlas.app.feature.common.rememberCategories
 import com.atlas.app.feature.common.AtlasField
 import com.atlas.app.feature.common.SyncBar
 import com.atlas.app.feature.intelligence.ArticleCard
@@ -50,7 +51,7 @@ class SustainabilityViewModel(private val app: AtlasApp) : ViewModel() {
     private val db = app.database
     val articles: StateFlow<List<ArticleEntity>> = db.articleDao()
         .observeByCategories(
-            listOf(Category.CLIMATE.name, Category.SUSTAINABILITY.name),
+            listOf(Category.CLIMATE.name, Category.SUSTAINABILITY.name, Category.ENERGY.name),
             System.currentTimeMillis() - 30L * 24 * 3600_000,
             120,
         )
@@ -88,6 +89,7 @@ fun SustainabilityScreen() {
     val vm: SustainabilityViewModel = viewModel(factory = viewModelFactory { initializer { SustainabilityViewModel(app) } })
     val articles by vm.articles.collectAsStateWithLifecycle()
     val observations by vm.observations.collectAsStateWithLifecycle()
+    val names = rememberCategories(app).associate { it.id to it.name }
 
     ScreenFrame(Destination.Sustainability.sectionLabel, "Sürdürülebilirlik ve iklim izleme") {
         SyncBar(app)
@@ -104,7 +106,7 @@ fun SustainabilityScreen() {
                 item { EmptyHint("Henüz bu başlıkta haber yok. Eşitleme sonrası burada görünür.") }
             }
             items(articles, key = { it.id }) { a ->
-                ArticleCard(a, { vm.toggleSaved(a) }, { n, t -> vm.saveNote(a, n, t) })
+                ArticleCard(a, names[a.category] ?: "Diğer", { vm.toggleSaved(a) }, { n, t -> vm.saveNote(a, n, t) })
             }
         }
     }

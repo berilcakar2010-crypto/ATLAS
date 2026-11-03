@@ -45,6 +45,7 @@ import com.atlas.app.feature.command.CommandCenterScreen
 import com.atlas.app.feature.library.LibraryScreen
 import com.atlas.app.feature.archive.ArchiveScreen
 import com.atlas.app.feature.deepdive.DeepDiveScreen
+import com.atlas.app.feature.dictionary.DictionaryScreen
 import com.atlas.app.feature.intelligence.IntelligenceScreen
 import com.atlas.app.feature.notebook.NotebookScreen
 import com.atlas.app.feature.radar.RadarScreen
@@ -103,6 +104,7 @@ fun AtlasShell() {
                 composable(Destination.Notebook.route) { NotebookScreen() }
                 composable(Destination.Sustainability.route) { SustainabilityScreen() }
                 composable(Destination.OfflineArchive.route) { ArchiveScreen() }
+                composable(Destination.Dictionary.route) { DictionaryScreen() }
                 composable(Destination.Settings.route) { SettingsScreen() }
             }
         }

@@ -54,8 +54,9 @@ class SyncManager(private val db: AtlasDatabase) {
         if (fresh.isNotEmpty()) db.feedDao().insertAll(fresh)
         // Kataloğu güncelle (adres değişmiş olabilir), "enabled" korunur.
         FeedCatalog.all.filter { it.id in existing }.forEach {
-            db.feedDao().updateMeta(it.id, it.name, it.url, it.category.name, it.kind.name, it.language, it.mixed)
+            db.feedDao().updateMeta(it.id, it.name, it.url, it.kind.name, it.language, it.mixed)
         }
+        db.categoryDao().insertAll(com.atlas.app.data.feed.CategorySeeds.all)
         if (db.topicDao().count() == 0) db.topicDao().insertAll(TopicSeeds.all)
     }
 
@@ -72,12 +73,13 @@ class SyncManager(private val db: AtlasDatabase) {
             var done = 0
             _status.value = SyncStatus(running = true, phase = "Haber kaynakları", total = total)
 
+            val cats = db.categoryDao().getAll()
             val gate = Semaphore(4)
             val results = coroutineScope {
                 feeds.map { feed ->
                     async {
                         gate.withPermit {
-                            val r = syncFeed(feed)
+                            val r = syncFeed(feed, cats)
                             synchronized(this@SyncManager) {
                                 done++
                                 _status.value = _status.value.copy(done = done)
@@ -136,7 +138,7 @@ class SyncManager(private val db: AtlasDatabase) {
     @Volatile
     private var lastPaperSync: Long = 0
 
-    private suspend fun syncFeed(feed: FeedSourceEntity): Pair<Int, Boolean> {
+    private suspend fun syncFeed(feed: FeedSourceEntity, cats: List<com.atlas.app.data.db.CategoryEntity>): Pair<Int, Boolean> {
         val spec = FeedSpec(
             id = feed.id, name = feed.name, url = feed.url,
             category = Category.fromName(feed.category), kind = com.atlas.app.data.feed.SourceKind.fromName(feed.kind),
@@ -155,7 +157,7 @@ class SyncManager(private val db: AtlasDatabase) {
                     url = it.link,
                     urlKey = TextUtil.urlKey(it.link),
                     publishedAt = (it.publishedAt ?: now).coerceAtMost(now),
-                    category = Classifier.classify(it.title, it.summary, spec).name,
+                    category = Classifier.classifyText(it.title, it.summary, feed.category, if (feed.mixed) cats else emptyList()),
                     kind = feed.kind,
                     language = feed.language,
                     fetchedAt = now,
@@ -187,6 +189,23 @@ class SyncManager(private val db: AtlasDatabase) {
         throw e
     } catch (e: Exception) {
         0
+    }
+
+    /** Anahtar sözcükler değiştikten sonra karma kaynaklardaki mevcut haberleri yeniden sınıflandırır. */
+    suspend fun reclassify(): Int {
+        val cats = db.categoryDao().getAll()
+        val mixedIds = db.feedDao().observeAllOnce().filter { it.mixed }
+        if (mixedIds.isEmpty()) return 0
+        val fallback = mixedIds.associate { it.id to it.category }
+        var changed = 0
+        db.articleDao().getBySources(mixedIds.map { it.id }).forEach { a ->
+            val c = Classifier.classifyText(a.title, a.summary, fallback[a.sourceId] ?: a.category, cats)
+            if (c != a.category) {
+                db.articleDao().setCategory(a.id, c)
+                changed++
+            }
+        }
+        return changed
     }
 
     /** Radar'daki tek konuyu hemen yeniler. */
