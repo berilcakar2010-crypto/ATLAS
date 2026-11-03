@@ -14,10 +14,10 @@ import com.atlas.app.R
 @OptIn(ExperimentalTextApi::class)
 private fun variableFont(resId: Int, weightValue: Int, weight: FontWeight): Font =
     Font(
-        resId,
-        weight,
-        FontStyle.Normal,
-        FontVariation.Settings(FontVariation.weight(weightValue)),
+        resId = resId,
+        weight = weight,
+        style = FontStyle.Normal,
+        variationSettings = FontVariation.Settings(FontVariation.weight(weightValue)),
     )
 
 /** Başlıklar: Source Serif 4 (OFL). */
