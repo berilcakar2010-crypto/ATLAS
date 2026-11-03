@@ -29,34 +29,17 @@ Bir çalışmayı elle başlatmak için: **Actions → Build APK → Run workflo
 * Bu anahtar kişisel yan yükleme içindir (Play Store için uygun değil). Repo herkese açıksa, anahtarı bilen biri
   aynı imzayla APK üretebilir; bu yüzden APK'yi yalnızca kendi reponun Actions sekmesinden indir.
 
-## Durum (Phase 3)
+## Durum (Phase 7 — derleme başarılı, cihazda test EDİLMEDİ)
 
-**Çalışıyor**
+Yazılan ve CI'da derlenen özellikler:
+- Daily Intelligence: 53 RSS/Atom kaynağı (canlı doğrulanmış; ölü/engelli 8 kaynak çıkarıldı), konu ve kaynak türü etiketi, arama, kaydetme, not.
+- Research Radar: arXiv + PubMed araması, 16 başlangıç konusu (düzenlenebilir), kaydetme, not.
+- Sürdürülebilirlik izleyici, Çevrimdışı Arşiv durumu, bilgi grafiği (yalnızca etiket/başlık metin eşleşmesi).
+- S Pen defteri: basınçlı çizim, kalem türleri, silgi, şekil araçları, kâğıt türleri, geri al/yinele, PDF dışa aktarma.
+- Deep Dive: yapay zekâsız çalışma sayfası + gerçek makale araması; isteğe bağlı Gemini / OpenAI uyumlu sağlayıcı (varsayılan kapalı, uygunluk uyarısı var).
+- Command Center: canlı bülten, modül gizleme/sıralama/boyutlandırma. Arka plan eşitleme: 6 saatte bir.
 
-* Kalıcı sol gezinme: geniş ekranda kenar çubuğu, dar (portre) ekranda 76 dp'lik ray
-* Tasarım sistemi: palet, Source Serif 4 / Inter / JetBrains Mono (uygulamaya gömülü), çerçeveli paneller
-* Yerel SQLite (Room) veritabanı
-* Soru Motoru: soru ekleme, 6 durum arasında geçiş, silme
-* Kütüphane: not ekleme, favori, silme
-* Command Center: saat/tarih ve veritabanından canlı "son kaydedilenler" ve "çözülmemiş sorular"
-* Ayarlar: tüm yerel verileri silme (onaylı), uygulama durumu
-
-**Henüz yok (ekranlar bunu açıkça "Uygulanmadı" diye belirtir)**
-
-* Daily Intelligence, RSS, Research Radar, arXiv, PubMed, Sürdürülebilirlik (Phase 4)
-* Çevrimdışı arşiv ve senkronizasyon durumları (Phase 4)
-* S Pen defteri, el yazısı, PDF dışa aktarma (Phase 5). El yazısı **tanıma** planlanmıyor.
-* Deep Dive ve yapay zekâ sağlayıcıları (Phase 6)
-* Bilgi grafiği, içe/dışa aktarma, dashboard modüllerini taşıma/gizleme/boyutlandırma
-
-## Dürüst notlar
-
-* Bu kod, geliştirme ortamında **derlenemedi** (Android SDK yok). İlk derleme GitHub Actions'ta yapılacak.
-  Hata çıkarsa Actions günlüğünü paylaş, düzeltilir.
-* Tablet üzerinde **test edilmedi.** Yerleşim, dokunma hedefleri ve ileride S Pen davranışı cihazda doğrulanmalı.
-* Bu sürümde uygulamanın **INTERNET izni yok**; hiçbir veri dışarı gönderilmez. İzin, Phase 4'te RSS için eklenecek.
-* Gradle wrapper dosyası repoda yok; derleme GitHub'ın kurduğu Gradle 8.10.2 ile yapılır. Android Studio ile
-  açarsan wrapper'ı kendisi oluşturur.
+Yok / doğrulanmadı: el yazısı tanıma, defterde metin/görsel, PDF üstüne not, haber tam metni; gerçek cihazda (Tab S10 Lite + S Pen) hiçbir şey denenmedi; v1→v2 veritabanı geçişi cihazda sınanmadı.
 
 ## Proje yapısı
 
@@ -73,7 +56,7 @@ app/src/main/java/com/atlas/app/
   feature/            command, questions, library, settings, placeholder
 ```
 
-## Veritabanı (Room, `atlas.db`, sürüm 1)
+## Veritabanı (Room, `atlas.db`, sürüm 2)
 
 | Tablo | Amaç |
 |---|---|
