@@ -32,3 +32,9 @@ jobs:
           p=$(curl -sS -L -m 30 -A "$UA" "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=synaptic+plasticity&retmax=2&retmode=json&sort=date")
           echo "PUBMED|$p" | head -c 600
           echo
+
+      - name: Probe Tureng
+        run: |
+          for u in "https://tureng.com/tr/turkce-ingilizce/hello" "https://tureng.com/en/turkish-english/hello"; do
+            echo "TURENG|$(curl -sS -L -m 25 -A 'Mozilla/5.0' -o /dev/null -w '%{http_code}' "$u")|$u"
+          done
