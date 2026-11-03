@@ -14,13 +14,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
 
-      - name: Android SDK
-        uses: android-actions/setup-android@v3
+      # Android SDK, GitHub runner imajında hazır geliyor; yalnızca lisansları kabul ediyoruz.
+      - name: Accept Android SDK licenses
+        run: |
+          SDKMANAGER=$(ls -d "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | head -n 1)
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
 
       - name: Gradle
         uses: gradle/actions/setup-gradle@v4
