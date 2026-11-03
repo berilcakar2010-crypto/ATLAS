@@ -1,0 +1,34 @@
+name: Check feeds
+
+# Elle çalıştırılır: FeedCatalog.kt'deki her adresi ve arXiv/PubMed uç noktalarını gerçekten dener.
+on:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Probe every feed URL
+        run: |
+          UA="ATLAS/0.2 (personal research reader)"
+          grep -oE 'url = "[^"]+"' app/src/main/java/com/atlas/app/data/feed/FeedCatalog.kt \
+            | sed -E 's/url = "(.*)"/\1/' | while read -r u; do
+            rm -f /tmp/feed.xml
+            code=$(curl -sS -L -m 25 -A "$UA" -o /tmp/feed.xml -w "%{http_code}" "$u" 2>/dev/null || echo ERR)
+            n=$( (grep -oE '<item[ >]|<entry[ >]' /tmp/feed.xml 2>/dev/null || true) | wc -l)
+            echo "RESULT|$code|$n|$u"
+          done
+
+      - name: Probe arXiv and PubMed
+        run: |
+          UA="ATLAS/0.2 (personal research reader)"
+          a=$(curl -sS -L -m 30 -A "$UA" "https://export.arxiv.org/api/query?search_query=all:%22synaptic+plasticity%22&max_results=2&sortBy=submittedDate&sortOrder=descending")
+          echo "ARXIV|entries=$(echo "$a" | grep -c '<entry>')"
+          echo "$a" | head -c 600
+          echo
+          p=$(curl -sS -L -m 30 -A "$UA" "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=synaptic+plasticity&retmax=2&retmode=json&sort=date")
+          echo "PUBMED|$p" | head -c 600
+          echo
