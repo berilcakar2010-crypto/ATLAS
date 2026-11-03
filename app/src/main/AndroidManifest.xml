@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Phase 3: hiçbir izin gerekmiyor. INTERNET izni Phase 4'te (RSS/arXiv) eklenecek. -->
+    <!-- RSS, arXiv, PubMed okuma ve (isteğe bağlı) yapay zekâ sağlayıcı çağrıları için. Konum vb. yok. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".AtlasApp"

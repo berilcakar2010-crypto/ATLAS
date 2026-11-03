@@ -31,6 +31,9 @@ interface LibraryDao {
     @Query("SELECT * FROM library_items ORDER BY createdAt DESC LIMIT :limit")
     fun observeRecent(limit: Int): Flow<List<LibraryItemEntity>>
 
+    @Query("SELECT * FROM library_items WHERE type = :type ORDER BY createdAt DESC")
+    fun observeByType(type: String): Flow<List<LibraryItemEntity>>
+
     @Insert
     suspend fun insert(item: LibraryItemEntity): Long
 

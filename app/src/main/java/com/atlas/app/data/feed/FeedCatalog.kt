@@ -67,7 +67,6 @@ object FeedCatalog {
         FeedSpec("retractionwatch", "Retraction Watch", url = "https://retractionwatch.com/feed/", category = Category.SCIENCE, kind = SourceKind.JOURNALISM),
 
         // Nörobilim
-        FeedSpec("neuroscience-news", "Neuroscience News", url = "https://neurosciencenews.com/feed/", category = Category.NEURO, kind = SourceKind.JOURNALISM),
         FeedSpec("transmitter", "The Transmitter", url = "https://www.thetransmitter.org/feed/", category = Category.NEURO, kind = SourceKind.JOURNALISM),
         FeedSpec("elife", "eLife", url = "https://elifesciences.org/rss/recent.xml", category = Category.NEURO, kind = SourceKind.PEER, mixed = true),
         FeedSpec("ploscb", "PLOS Computational Biology", url = "https://journals.plos.org/ploscompbiol/feed/atom", category = Category.NEURO, kind = SourceKind.PEER, mixed = true),
@@ -91,7 +90,6 @@ object FeedCatalog {
         FeedSpec("deepmind", "Google DeepMind", url = "https://deepmind.google/blog/rss.xml", category = Category.AI, kind = SourceKind.PRIMARY),
         FeedSpec("openai", "OpenAI", url = "https://openai.com/news/rss.xml", category = Category.AI, kind = SourceKind.PRIMARY),
         FeedSpec("huggingface", "Hugging Face Blog", url = "https://huggingface.co/blog/feed.xml", category = Category.AI, kind = SourceKind.PRIMARY),
-        FeedSpec("importai", "Import AI", url = "https://importai.substack.com/feed", category = Category.AI, kind = SourceKind.OPINION),
 
         // İklim, çevre, sürdürülebilirlik
         FeedSpec("carbonbrief", "Carbon Brief", url = "https://www.carbonbrief.org/feed/", category = Category.CLIMATE, kind = SourceKind.JOURNALISM),
@@ -100,7 +98,6 @@ object FeedCatalog {
         FeedSpec("insideclimate", "Inside Climate News", url = "https://insideclimatenews.org/feed/", category = Category.CLIMATE, kind = SourceKind.JOURNALISM),
         FeedSpec("guardian-env", "The Guardian · Environment", url = "https://www.theguardian.com/environment/rss", category = Category.CLIMATE, kind = SourceKind.JOURNALISM),
         FeedSpec("owid", "Our World in Data", url = "https://ourworldindata.org/atom.xml", category = Category.SUSTAINABILITY, kind = SourceKind.PRIMARY),
-        FeedSpec("unep", "UNEP", url = "https://www.unep.org/rss.xml", category = Category.SUSTAINABILITY, kind = SourceKind.PRIMARY),
 
         // Siyaset ve uluslararası ilişkiler
         FeedSpec("bbc-world", "BBC News · World", url = "https://feeds.bbci.co.uk/news/world/rss.xml", category = Category.POLITICS, kind = SourceKind.JOURNALISM),
@@ -111,16 +108,12 @@ object FeedCatalog {
         FeedSpec("crisisgroup", "International Crisis Group", url = "https://www.crisisgroup.org/rss.xml", category = Category.POLITICS, kind = SourceKind.PRIMARY),
         FeedSpec("globalvoices", "Global Voices", url = "https://globalvoices.org/feed/", category = Category.POLITICS, kind = SourceKind.JOURNALISM),
         FeedSpec("bbc-turkce", "BBC Türkçe", url = "https://feeds.bbci.co.uk/turkce/rss.xml", category = Category.POLITICS, kind = SourceKind.JOURNALISM, language = "tr"),
-        FeedSpec("hdn", "Hürriyet Daily News", url = "https://www.hurriyetdailynews.com/rss", category = Category.POLITICS, kind = SourceKind.JOURNALISM),
-        FeedSpec("bianet", "Bianet", url = "https://bianet.org/rss", category = Category.POLITICS, kind = SourceKind.JOURNALISM, language = "tr"),
         FeedSpec("medyascope", "Medyascope", url = "https://medyascope.tv/feed/", category = Category.POLITICS, kind = SourceKind.JOURNALISM, language = "tr"),
         FeedSpec("dailysabah", "Daily Sabah", url = "https://www.dailysabah.com/rssFeed/turkey", category = Category.POLITICS, kind = SourceKind.JOURNALISM),
 
         // Ekonomi
         FeedSpec("projectsyndicate", "Project Syndicate", url = "https://www.project-syndicate.org/rss", category = Category.ECONOMICS, kind = SourceKind.OPINION, mixed = true),
         FeedSpec("voxeu", "VoxEU / CEPR", url = "https://cepr.org/rss/vox-content", category = Category.ECONOMICS, kind = SourceKind.OPINION),
-        FeedSpec("imf-blog", "IMF Blog", url = "https://www.imf.org/en/Blogs/rss", category = Category.ECONOMICS, kind = SourceKind.PRIMARY),
-        FeedSpec("worldbank-blogs", "World Bank Blogs", url = "https://blogs.worldbank.org/en/rss", category = Category.ECONOMICS, kind = SourceKind.PRIMARY),
 
         // Felsefe
         FeedSpec("aeon", "Aeon", url = "https://aeon.co/feed.rss", category = Category.PHILOSOPHY, kind = SourceKind.OPINION, mixed = true),
@@ -135,7 +128,6 @@ object FeedCatalog {
 
         // Sosyoloji ve toplum
         FeedSpec("pew", "Pew Research Center", url = "https://www.pewresearch.org/feed/", category = Category.SOCIOLOGY, kind = SourceKind.PRIMARY),
-        FeedSpec("brookings", "Brookings", url = "https://www.brookings.edu/feed/", category = Category.SOCIOLOGY, kind = SourceKind.OPINION, mixed = true),
         FeedSpec("conversation", "The Conversation", url = "https://theconversation.com/global/articles.atom", category = Category.SOCIOLOGY, kind = SourceKind.OPINION, mixed = true),
         FeedSpec("hrw", "Human Rights Watch", url = "https://www.hrw.org/rss/news", category = Category.SOCIOLOGY, kind = SourceKind.PRIMARY),
         FeedSpec("amnesty", "Amnesty International", url = "https://www.amnesty.org/en/latest/news/feed/", category = Category.SOCIOLOGY, kind = SourceKind.PRIMARY),

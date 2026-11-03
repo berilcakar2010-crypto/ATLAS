@@ -1,6 +1,7 @@
 package com.atlas.app.feature.library
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -74,9 +75,19 @@ fun LibraryScreen() {
     val items by vm.items.collectAsStateWithLifecycle()
 
     ScreenFrame(section = Destination.Library.sectionLabel, title = "Kütüphane") {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            AtlasChip("Şimdilik yalnızca notlar", highlight = true)
-            MetaText("Makale, kitap, PDF ve bilgi grafiği sonraki aşamalarda.")
+        var tab by rememberSaveable { mutableStateOf("notes") }
+        com.atlas.app.feature.common.FilterRow(
+            listOf("notes" to "Notlarım", "saved" to "Kayıtlı haber ve makaleler", "graph" to "Bilgi grafiği"),
+            tab,
+            { tab = it },
+        )
+        if (tab == "saved") {
+            Box(Modifier.weight(1f).fillMaxWidth()) { com.atlas.app.feature.library.SavedPanel(app.database) }
+            return@ScreenFrame
+        }
+        if (tab == "graph") {
+            Box(Modifier.weight(1f).fillMaxWidth()) { com.atlas.app.feature.library.KnowledgeGraphPanel(app.database) }
+            return@ScreenFrame
         }
         BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
             if (maxWidth >= 820.dp) {

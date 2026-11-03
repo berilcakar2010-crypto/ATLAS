@@ -33,6 +33,13 @@ jobs:
       - name: Build debug and release APKs
         run: gradle --no-daemon assembleDebug assembleRelease --stacktrace
 
+      - name: Print Room schema
+        if: always()
+        run: |
+          echo "SCHEMA-BEGIN"
+          cat app/schemas/com.atlas.app.data.db.AtlasDatabase/2.json || true
+          echo "SCHEMA-END"
+
       - name: Upload APKs
         uses: actions/upload-artifact@v4
         with:

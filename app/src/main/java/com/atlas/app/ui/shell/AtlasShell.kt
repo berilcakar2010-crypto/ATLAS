@@ -43,7 +43,12 @@ import com.atlas.app.core.design.SourceSerif
 import com.atlas.app.core.navigation.Destination
 import com.atlas.app.feature.command.CommandCenterScreen
 import com.atlas.app.feature.library.LibraryScreen
-import com.atlas.app.feature.placeholder.PlaceholderScreen
+import com.atlas.app.feature.archive.ArchiveScreen
+import com.atlas.app.feature.deepdive.DeepDiveScreen
+import com.atlas.app.feature.intelligence.IntelligenceScreen
+import com.atlas.app.feature.notebook.NotebookScreen
+import com.atlas.app.feature.radar.RadarScreen
+import com.atlas.app.feature.sustainability.SustainabilityScreen
 import com.atlas.app.feature.questions.QuestionsScreen
 import com.atlas.app.feature.settings.SettingsScreen
 
@@ -90,79 +95,14 @@ fun AtlasShell() {
                 composable(Destination.CommandCenter.route) {
                     CommandCenterScreen(onNavigate = ::navigateTo)
                 }
-                composable(Destination.DailyIntelligence.route) {
-                    PlaceholderScreen(
-                        destination = Destination.DailyIntelligence,
-                        phase = "Phase 4",
-                        planned = listOf(
-                            "RSS ve açık kaynaklardan günlük akış",
-                            "Konuya göre otomatik sınıflandırma",
-                            "Kaynak türü etiketi: kurumsal, hakemli, ön baskı, gazetecilik, yorum",
-                            "Olgu ve yorumun ayrı gösterilmesi, her haberde özgün bağlantı",
-                            "Çift kaydı önleme, arama, etiketleme, kütüphaneye kaydetme",
-                        ),
-                    )
-                }
-                composable(Destination.ResearchRadar.route) {
-                    PlaceholderScreen(
-                        destination = Destination.ResearchRadar,
-                        phase = "Phase 4",
-                        planned = listOf(
-                            "arXiv ve PubMed'den konu bazlı makale takibi",
-                            "Başlık, yazar, özet, tarih ve bağlantı (hiçbiri uydurulmayacak)",
-                            "Anahtar kelime ve tarih filtresi",
-                            "Kütüphaneye kaydetme ve kişisel not ekleme",
-                        ),
-                    )
-                }
-                composable(Destination.DeepDive.route) {
-                    PlaceholderScreen(
-                        destination = Destination.DeepDive,
-                        phase = "Phase 6",
-                        planned = listOf(
-                            "Değiştirilebilir yapay zekâ sağlayıcı arayüzü",
-                            "Uygunluk koşulları doğrulandıktan sonra Gemini seçeneği",
-                            "Yapay zekâ olmadan da çalışan geri dönüş durumu",
-                            "Kaynak bağlantılı, belirsizliği belirten araştırma yardımcısı",
-                        ),
-                    )
-                }
+                composable(Destination.DailyIntelligence.route) { IntelligenceScreen() }
+                composable(Destination.ResearchRadar.route) { RadarScreen() }
+                composable(Destination.DeepDive.route) { DeepDiveScreen() }
                 composable(Destination.Library.route) { LibraryScreen() }
                 composable(Destination.Questions.route) { QuestionsScreen() }
-                composable(Destination.Notebook.route) {
-                    PlaceholderScreen(
-                        destination = Destination.Notebook,
-                        phase = "Phase 5",
-                        planned = listOf(
-                            "S Pen ile serbest çizim, basınç duyarlılığı, silgi, fosforlu kalem",
-                            "Parmakla kaydırma/yakınlaştırma, avuç içi reddi",
-                            "Kareli, noktalı, çizgili, boş ve grafik kâğıdı",
-                            "Sayfa yönetimi, PDF'e aktarma",
-                            "El yazısı tanıma planlanmıyor; arama başlık ve etiketlerle yapılacak",
-                        ),
-                    )
-                }
-                composable(Destination.Sustainability.route) {
-                    PlaceholderScreen(
-                        destination = Destination.Sustainability,
-                        phase = "Phase 4",
-                        planned = listOf(
-                            "İklim, yenilenebilir enerji, biyoçeşitlilik ve politika kaynakları",
-                            "Gözlem kaydetme ve zaman içinde karşılaştırma",
-                            "İstatistikler yalnızca kaynağıyla birlikte gösterilecek",
-                        ),
-                    )
-                }
-                composable(Destination.OfflineArchive.route) {
-                    PlaceholderScreen(
-                        destination = Destination.OfflineArchive,
-                        phase = "Phase 4",
-                        planned = listOf(
-                            "Çevrimdışı hazır / internet gerekli / senkronizasyon bekliyor / başarısız durumları",
-                            "Senkronizasyon başarısız olsa bile yerel veri silinmez",
-                        ),
-                    )
-                }
+                composable(Destination.Notebook.route) { NotebookScreen() }
+                composable(Destination.Sustainability.route) { SustainabilityScreen() }
+                composable(Destination.OfflineArchive.route) { ArchiveScreen() }
                 composable(Destination.Settings.route) { SettingsScreen() }
             }
         }
