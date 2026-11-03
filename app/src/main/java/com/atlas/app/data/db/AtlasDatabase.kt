@@ -31,7 +31,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         StrokeEntity::class,
     ],
     version = 2,
-    exportSchema = true,
+    exportSchema = false,
 )
 abstract class AtlasDatabase : RoomDatabase() {
     abstract fun questionDao(): QuestionDao

@@ -77,7 +77,3 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.work.runtime.ktx)
 }
-
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
-}
